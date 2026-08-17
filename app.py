@@ -402,7 +402,13 @@ def generate_therapy_schedule():
         # Generate personalized response based on the condition
         response_message = f"I've analyzed your situation and detected {condition}. "
         response_message += f"I've created a personalized {len(schedule)}-week VR therapy schedule. "
+<<<<<<< HEAD
         response_message += "The schedule is designed to address your specific needs using immersive VR experiences. "
+=======
+        response_message += "The schedule is designed to address"
+        ""
+        " your specific needs using immersive VR experiences. "
+>>>>>>> bf751e002042e4d4d2bce56b216d9b26ebeccbe6
         response_message += "Each session builds upon the previous ones to ensure steady progress in your recovery journey. "
         response_message += f"Required VR equipment: {', '.join(schedule[0]['vr_requirements'].keys())}."
         
