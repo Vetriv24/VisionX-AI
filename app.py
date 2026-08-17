@@ -1,10 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import json
 import random
 from datetime import datetime, timedelta
 import logging
-import re
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -402,15 +400,14 @@ def generate_therapy_schedule():
         # Generate personalized response based on the condition
         response_message = f"I've analyzed your situation and detected {condition}. "
         response_message += f"I've created a personalized {len(schedule)}-week VR therapy schedule. "
-<<<<<<< HEAD
         response_message += "The schedule is designed to address your specific needs using immersive VR experiences. "
-=======
-        response_message += "The schedule is designed to address"
-        ""
-        " your specific needs using immersive VR experiences. "
->>>>>>> bf751e002042e4d4d2bce56b216d9b26ebeccbe6
         response_message += "Each session builds upon the previous ones to ensure steady progress in your recovery journey. "
-        response_message += f"Required VR equipment: {', '.join(schedule[0]['vr_requirements'].keys())}."
+        required_equipment = [
+            item.replace('_', ' ')
+            for item, required in schedule[0]['vr_requirements'].items()
+            if required
+        ]
+        response_message += f"Required VR equipment: {', '.join(required_equipment) or 'none'}."
         
         return jsonify({
             'message': response_message,
@@ -430,7 +427,13 @@ def health_check():
 @app.route('/schedule_sessions', methods=['POST'])
 def schedule_sessions():
     try:
-        data = request.get_json()
+        data = request.get_json(silent=True)
+        if not data:
+            return jsonify({
+                'success': False,
+                'error': 'No JSON data received.'
+            }), 400
+
         dates = data.get('dates', [])
         trauma_details = data.get('trauma_details', '')
 
@@ -438,7 +441,13 @@ def schedule_sessions():
             return jsonify({
                 'success': False, 
                 'error': 'Missing required information. Please provide both dates and trauma details.'
-            })
+            }), 400
+
+        if not isinstance(dates, list) or not all(isinstance(date, str) and date.strip() for date in dates):
+            return jsonify({
+                'success': False,
+                'error': 'Dates must be a non-empty list of date strings.'
+            }), 400
 
         # Determine session type based on trauma details
         session_type = determine_session_type(trauma_details)
@@ -466,7 +475,7 @@ def schedule_sessions():
         return jsonify({
             'success': False, 
             'error': 'Failed to schedule sessions'
-        })
+        }), 500
 
 def get_condition_key(session_type):
     """Map session type to condition key"""
@@ -502,5 +511,4 @@ def generate_session_description(session_type, trauma_details):
 
 if __name__ == '__main__':
     logger.info("Starting Flask application...")
-    app.run(debug=True, port=5000) 
-    app.run(debug=True, port=5000) 
+    app.run(debug=True, port=5000)
