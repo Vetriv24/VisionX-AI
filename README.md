@@ -87,4 +87,4 @@ Option B: Open `index.html` directly in your browser. For best compatibility, us
 
 ## 📌 License
 
-Feel free to add your preferred open source license when publishing on GitHub.
+Feel free to add your preferred open source license when publishing on Git and GitHub.
